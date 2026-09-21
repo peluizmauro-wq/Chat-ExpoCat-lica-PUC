@@ -1,0 +1,12 @@
+{
+  "projeto": "Assistente ao Expositor da ExpoCatólica 2026",
+  "disciplina": "AI Factory: Building Intelligent Systems",
+  "etapa": "Etapa 1 - Item 2",
+  "interface": "Streamlit",
+  "database": "DuckDB",
+  "tabelas": 3,
+  "documentos_rag": 4,
+  "vector_store": "ChromaDB (fallback TF-IDF)",
+  "llm": "OpenAI opcional via .env",
+  "dados_reais_de_expositores": false
+}
