@@ -1,0 +1,26 @@
+pendencia_id,expositor_id,descricao,status,prazo,prioridade
+PEN001,EXP001,Logomarca em alta resolução,Concluída,2026-05-25,Baixa
+PEN002,EXP001,Credenciamento da equipe,Pendente,2026-07-10,Média
+PEN003,EXP002,Lista de produtos para exposição,Em análise,2026-06-30,Média
+PEN004,EXP003,Projeto técnico do estande + ART/RRT,Pendente,2026-06-10,Alta
+PEN005,EXP003,Solicitação de energia adicional,Pendente,2026-06-20,Alta
+PEN006,EXP003,Credenciamento da equipe,Pendente,2026-07-10,Média
+PEN007,EXP004,Projeto técnico do estande + ART/RRT,Concluída,2026-06-10,Alta
+PEN008,EXP004,Solicitação de internet dedicada,Em análise,2026-07-05,Média
+PEN009,EXP005,Credenciamento da equipe,Concluída,2026-07-10,Média
+PEN010,EXP006,Projeto técnico do estande + ART/RRT,Pendente,2026-06-10,Alta
+PEN011,EXP006,Extintor do estande,Pendente,2026-07-22,Alta
+PEN012,EXP007,Logomarca em alta resolução,Concluída,2026-05-25,Baixa
+PEN013,EXP007,Credenciamento da equipe,Em análise,2026-07-10,Média
+PEN014,EXP008,Credenciamento da equipe,Pendente,2026-07-10,Média
+PEN015,EXP009,Autorização de conteúdo audiovisual,Em análise,2026-07-10,Média
+PEN016,EXP010,Logomarca em alta resolução,Concluída,2026-05-25,Baixa
+PEN017,EXP010,Credenciamento da equipe,Pendente,2026-07-10,Média
+PEN018,EXP011,Material promocional,Concluída,2026-06-30,Baixa
+PEN019,EXP012,Projeto técnico do estande + ART/RRT,Pendente,2026-06-10,Alta
+PEN020,EXP012,Solicitação de hidráulica,Pendente,2026-06-20,Alta
+PEN021,EXP013,Projeto técnico do estande + ART/RRT,Em análise,2026-06-10,Alta
+PEN022,EXP013,Credenciamento da equipe,Pendente,2026-07-10,Média
+PEN023,EXP014,Logomarca em alta resolução,Concluída,2026-05-25,Baixa
+PEN024,EXP015,Projeto técnico do estande + ART/RRT,Pendente,2026-06-10,Alta
+PEN025,EXP015,Extintor do estande,Pendente,2026-07-22,Alta
