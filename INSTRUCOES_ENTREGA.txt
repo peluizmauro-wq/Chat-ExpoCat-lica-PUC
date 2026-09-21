@@ -1,0 +1,18 @@
+AI FACTORY: BUILDING INTELLIGENT SYSTEMS
+ETAPA 1 — ITEM 2
+Projeto: Assistente ao Expositor da ExpoCatólica 2026
+
+Este repositório contém a entrega funcional solicitada:
+- aplicação Streamlit;
+- integração opcional com LLM;
+- dados estruturados fictícios;
+- 3 tabelas relacionadas em DuckDB;
+- 4 documentos para RAG;
+- ChromaDB com fallback local;
+- system prompt contextualizado;
+- .env.example;
+- .gitignore;
+- requirements.txt;
+- roteiro de perguntas e vídeo.
+
+Comece pelo arquivo README.md.
