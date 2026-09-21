@@ -1,0 +1,16 @@
+estande_id,expositor_id,codigo_estande,setor,metragem_m2,tipo_montagem
+STD001,EXP001,A-101,Azul,24,montagem básica
+STD002,EXP002,A-115,Azul,18,montagem básica
+STD003,EXP003,T-210,Verde,30,área livre
+STD004,EXP004,A-132,Azul,20,área livre
+STD005,EXP005,A-142,Azul,16,montagem básica
+STD006,EXP006,L-301,Lilás,25,área livre
+STD007,EXP007,T-218,Verde,20,montagem básica
+STD008,EXP008,A-155,Azul,12,montagem básica
+STD009,EXP009,L-312,Lilás,20,área livre
+STD010,EXP010,A-165,Azul,18,montagem básica
+STD011,EXP011,A-174,Azul,12,montagem básica
+STD012,EXP012,L-325,Lilás,24,área livre
+STD013,EXP013,T-226,Verde,30,área livre
+STD014,EXP014,A-188,Azul,16,montagem básica
+STD015,EXP015,L-338,Lilás,36,área livre
