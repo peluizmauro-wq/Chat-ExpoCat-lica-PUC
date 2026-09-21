@@ -1,0 +1,16 @@
+expositor_id,nome_fantasia,segmento,cidade,uf,status_contrato,email_demo
+EXP001,Editora Caminho Novo,Editorial,São Paulo,SP,confirmado,contato@caminhonovo.exemplo
+EXP002,Ateliê São Lucas,Artigos Religiosos,Aparecida,SP,confirmado,contato@ateliesaolucas.exemplo
+EXP003,Turismo Peregrino Brasil,Turismo Religioso,Belo Horizonte,MG,confirmado,contato@peregrinobrasil.exemplo
+EXP004,Tecnologia Ecclesia,Tecnologia,Curitiba,PR,confirmado,contato@ecclesia.exemplo
+EXP005,Livraria Boa Semente,Editorial,Campinas,SP,confirmado,contato@boasemente.exemplo
+EXP006,Arte Sacra Esperança,Arte Sacra,Goiânia,GO,confirmado,contato@artesacraesperanca.exemplo
+EXP007,Roteiros da Fé,Turismo Religioso,Salvador,BA,confirmado,contato@roteirosdafe.exemplo
+EXP008,Soluções Paroquiais,Serviços,São José dos Campos,SP,confirmado,contato@solucoesparoquiais.exemplo
+EXP009,Música e Missão,Música,Rio de Janeiro,RJ,confirmado,contato@musicaemissao.exemplo
+EXP010,Veste Litúrgica Domus,Vestes Litúrgicas,Brusque,SC,confirmado,contato@domus.exemplo
+EXP011,Comunicação Kerigma,Comunicação,São Paulo,SP,confirmado,contato@kerigma.exemplo
+EXP012,Instituto Via Sacra,Formação,Brasília,DF,confirmado,contato@viasacra.exemplo
+EXP013,Santuários em Rede,Turismo Religioso,Recife,PE,confirmado,contato@santuariosemrede.exemplo
+EXP014,Casa do Catequista,Editorial,Londrina,PR,confirmado,contato@casadocatequista.exemplo
+EXP015,Arquitetura Templo Vivo,Arquitetura,São Paulo,SP,confirmado,contato@templovivo.exemplo
