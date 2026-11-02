@@ -1,0 +1,28 @@
+{
+  "dataset": "Statlog (German Credit Data) - UCI 144",
+  "registros": 1000,
+  "atributos_originais": 20,
+  "treino": 800,
+  "teste": 200,
+  "classe_positiva": "mau risco (1)",
+  "modelo_selecionado": "lgbm",
+  "accuracy": 0.72,
+  "precision": 0.54,
+  "recall": 0.45,
+  "f1": 0.4909,
+  "roc_auc": 0.7476,
+  "confusion_matrix": [
+    [
+      117,
+      23
+    ],
+    [
+      33,
+      27
+    ]
+  ],
+  "random_state": 42,
+  "test_size": 0.2,
+  "time_budget_seconds": 45,
+  "nota_contextual": "No projeto ExpoCatólica, recall é uma métrica importante porque um falso negativo representa deixar passar um caso de risco que precisaria de atenção preventiva."
+}
