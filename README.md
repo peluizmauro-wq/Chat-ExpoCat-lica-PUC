@@ -124,3 +124,36 @@ Exemplos no chat:
 Mostre os cenários do modelo preditivo.
 Analise o risco do cenário 3.
 ```
+
+
+---
+
+## Etapa 2 — Agentes especializados
+
+O assistente agora possui dois agentes especializados e um coordenador:
+
+1. **Agente Operacional ExpoCatólica**
+   - consulta o RAG;
+   - usa Manual do Expositor, Regulamento e normas do Pro Magno;
+   - responde sobre prazos, montagem, desmontagem, credenciamento e regras.
+
+2. **Agente de Dados e Risco**
+   - consulta o DuckDB;
+   - lê dados demonstrativos de expositores, estandes e pendências;
+   - executa o modelo preditivo treinado com FLAML.
+
+3. **Coordenador Multiagente**
+   - identifica tarefas que exigem mais de uma camada;
+   - aciona os dois agentes;
+   - combina o resultado no mesmo chat.
+
+### Pergunta recomendada para demonstrar os agentes
+
+```text
+Faça uma análise integrada: consulte as pendências da Turismo Peregrino Brasil,
+analise o risco do cenário 3 e informe o prazo do projeto técnico.
+```
+
+Essa pergunta força o sistema a usar DuckDB + ML + RAG em uma única tarefa coordenada.
+
+A implementação é uma orquestração multiagente equivalente, construída de forma transparente para fins acadêmicos. Os papéis, ferramentas e tarefas seguem o mesmo conceito apresentado em frameworks como CrewAI.
