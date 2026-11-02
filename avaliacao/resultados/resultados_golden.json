@@ -1,10 +1,10 @@
 {
   "resumo": {
     "total": 15,
-    "aprovados": 8,
-    "taxa_aprovacao": 0.5333,
-    "answer_relevancy_media": 0.5867,
-    "faithfulness_media": 0.6917,
+    "aprovados": 12,
+    "taxa_aprovacao": 0.8,
+    "answer_relevancy_media": 0.9778,
+    "faithfulness_media": 0.7096,
     "metodo": "Avaliação determinística equivalente ao DeepEval, com métricas de faithfulness e answer relevancy. O projeto mantém compatibilidade para evolução futura com LLM-as-a-judge."
   },
   "casos": [
@@ -13,23 +13,23 @@
       "categoria": "facil",
       "tipo": "rag",
       "pergunta": "Quando acontece a ExpoCatólica 2026?",
-      "resposta": "Com base nos documentos da ExpoCatólica 2026:\n\n- EXPOCATÓLICA 2026 — MANUAL OPERACIONAL DO EXPOSITOR\n- Evento: ExpoCatólica 2026 — 19ª edição.\n- EXPOCATÓLICA 2026 — FAQ OPERACIONAL PARA O ASSISTENTE\n- Pergunta: Quando a feira acontece?",
+      "resposta": "A ExpoCatólica 2026 acontece de 23 a 26 de julho de 2026, no Pro Magno Centro de Eventos, em São Paulo.",
       "fontes": [
         "01_manual_expositor_2026.txt",
         "04_faq_operacional_2026.txt",
         "02_regulamento_geral_2026.txt"
       ],
       "modo": "rag-local",
-      "answer_relevancy": 0.4,
-      "faithfulness": 0.8235,
-      "aprovado": false
+      "answer_relevancy": 1.0,
+      "faithfulness": 1.0,
+      "aprovado": true
     },
     {
       "id": "Q02",
       "categoria": "facil",
       "tipo": "rag",
       "pergunta": "Quais são as datas e horários de montagem?",
-      "resposta": "Com base nos documentos da ExpoCatólica 2026:\n\n- Pergunta: Quais são os dias B2B?\n- Pergunta: Quais são os dias B2C?\n- EPIs são obrigatórios em montagem e desmontagem.\n- Equipamentos de montagem e desmontagem, como escadas, andaimes e carrinhos, devem ser providenciados pelos responsáveis pela operação.",
+      "resposta": "As montadoras terceirizadas trabalham em 20 e 21 de julho de 2026, das 12h às 21h. Em 22 de julho, o expositor realiza organização interna das 10h às 21h.",
       "fontes": [
         "04_faq_operacional_2026.txt",
         "02_regulamento_geral_2026.txt",
@@ -37,23 +37,23 @@
         "01_manual_expositor_2026.txt"
       ],
       "modo": "rag-local",
-      "answer_relevancy": 0.1667,
-      "faithfulness": 0.8696,
-      "aprovado": false
+      "answer_relevancy": 1.0,
+      "faithfulness": 1.0,
+      "aprovado": true
     },
     {
       "id": "Q03",
       "categoria": "facil",
       "tipo": "rag",
       "pergunta": "Até quando posso solicitar energia adicional e hidráulica?",
-      "resposta": "Com base nos documentos da ExpoCatólica 2026:\n\n- Energia adicional e hidráulica dependem de solicitação dentro do prazo e de disponibilidade técnica.\n- Pergunta: Qual o prazo para energia adicional e hidráulica?\n- Até 20/06/2026: solicitação e pagamento de energia adicional e hidráulica.\n- Pergunta: Quando a feira acontece?",
+      "resposta": "O prazo para solicitar energia adicional e hidráulica é 20 de junho de 2026.",
       "fontes": [
         "01_manual_expositor_2026.txt",
         "04_faq_operacional_2026.txt"
       ],
       "modo": "rag-local",
-      "answer_relevancy": 0.6667,
-      "faithfulness": 0.9091,
+      "answer_relevancy": 1.0,
+      "faithfulness": 0.8571,
       "aprovado": true
     },
     {
@@ -83,7 +83,7 @@
       ],
       "modo": "ml-preditivo",
       "answer_relevancy": 1.0,
-      "faithfulness": 0.3143,
+      "faithfulness": 0.4,
       "aprovado": false
     },
     {
@@ -91,7 +91,7 @@
       "categoria": "intermediaria",
       "tipo": "rag",
       "pergunta": "Posso compartilhar meu estande com outra marca?",
-      "resposta": "### Agente Operacional ExpoCatólica\n- Pergunta: Posso compartilhar o estande com outra empresa?\n- Para compartilhar o estande ou incluir segunda marca, é necessária alteração contratual e aprovação prévia.\n- É proibida sublocação, cessão, transferência, compartilhamento ou uso do estande por terceiros, assim como exposição de marca de empresa não contratante, sem autorização formal da Promocat.\n- Pergunta: Posso distribuir material fora do estande?\n\n### Agente de Dados e Risco\nNão identifiquei uma consulta de dados ou previsão que possa executar com segurança.\n\n### Coordenação\nOs dois agentes foram acionados porque a pergunta exige combinar informação documental com dados e/ou previsão. O resultado acima mantém cada evidência em sua camada de origem.",
+      "resposta": "### Agente Operacional ExpoCatólica\n- Para compartilhar o estande ou incluir segunda marca, é necessária alteração contratual e aprovação prévia.\n- É proibida sublocação, cessão, transferência, compartilhamento ou uso do estande por terceiros, assim como exposição de marca de empresa não contratante, sem autorização formal da Promocat.\n- A inclusão sem autorização pode resultar em retirada de materiais/marca, multa, cancelamento de funcionamento e outras medidas cabíveis.\n- Resposta: A regra geral é distribuição dentro do estande.\n\n### Agente de Dados e Risco\nNão identifiquei uma consulta de dados ou previsão que possa executar com segurança.\n\n### Coordenação\nOs dois agentes foram acionados porque a pergunta exige combinar informação documental com dados e/ou previsão. O resultado acima mantém cada evidência em sua camada de origem.",
       "fontes": [
         "04_faq_operacional_2026.txt",
         "02_regulamento_geral_2026.txt",
@@ -99,7 +99,7 @@
       ],
       "modo": "multiagente",
       "answer_relevancy": 1.0,
-      "faithfulness": 0.5833,
+      "faithfulness": 0.6479,
       "aprovado": true
     },
     {
@@ -107,14 +107,14 @@
       "categoria": "intermediaria",
       "tipo": "rag",
       "pergunta": "Posso desmontar o estande antes do encerramento?",
-      "resposta": "Com base nos documentos da ExpoCatólica 2026:\n\n- Pergunta: Posso desmontar antes do encerramento?\n- A retirada de produtos e a desmontagem antes do encerramento oficial são proibidas.\n- Pergunta: Posso distribuir material fora do estande?\n- Pergunta: Posso compartilhar o estande com outra empresa?",
+      "resposta": "Não. A retirada de produtos e a desmontagem antes do encerramento oficial são proibidas.",
       "fontes": [
         "04_faq_operacional_2026.txt",
         "02_regulamento_geral_2026.txt"
       ],
       "modo": "rag-local",
-      "answer_relevancy": 0.6667,
-      "faithfulness": 0.9545,
+      "answer_relevancy": 1.0,
+      "faithfulness": 1.0,
       "aprovado": true
     },
     {
@@ -137,7 +137,7 @@
       "categoria": "intermediaria",
       "tipo": "agente",
       "pergunta": "Use o Agente Operacional e informe o prazo do projeto técnico.",
-      "resposta": "### Agente Operacional ExpoCatólica\n- Pergunta: Qual o prazo para projeto técnico e ART/RRT?\n- Projetos de área livre devem incluir projeto arquitetônico e, quando aplicável, elétrico e hidráulico, com responsável técnico e ART/RRT.\n- EXPOCATÓLICA 2026 — FAQ OPERACIONAL PARA O ASSISTENTE\n- Pergunta: Qual o prazo para energia adicional e hidráulica?",
+      "resposta": "### Agente Operacional ExpoCatólica\nO prazo para envio do projeto técnico com ART/RRT é 10 de junho de 2026. Se ainda estiver pendente, confirme a regularização com a organização/CAEX.",
       "fontes": [
         "04_faq_operacional_2026.txt",
         "01_manual_expositor_2026.txt",
@@ -145,8 +145,8 @@
         "Orquestração: Agente Operacional ExpoCatólica: RAG, TF-IDF local (fallback compatível)"
       ],
       "modo": "multiagente",
-      "answer_relevancy": 0.5,
-      "faithfulness": 1.0,
+      "answer_relevancy": 1.0,
+      "faithfulness": 0.5625,
       "aprovado": true
     },
     {
@@ -154,7 +154,7 @@
       "categoria": "dificil",
       "tipo": "multiagente",
       "pergunta": "Faça uma análise integrada: consulte as pendências da Turismo Peregrino Brasil, analise o risco do cenário 3 e informe o prazo do projeto técnico.",
-      "resposta": "### Agente Operacional ExpoCatólica\n- Pergunta: Qual o prazo para projeto técnico e ART/RRT?\n- Pergunta: Qual o prazo para energia adicional e hidráulica?\n\n### Agente de Dados e Risco\nPendências de Turismo Peregrino Brasil:\n- Projeto técnico do estande + ART/RRT — Pendente — prazo 2026-06-10 — prioridade Alta\n- Solicitação de energia adicional — Pendente — prazo 2026-06-20 — prioridade Alta\n- Credenciamento da equipe — Pendente — prazo 2026-07-10 — prioridade Média\n\n**Cenário 3 — risco ALTO**\n\nProbabilidade estimada pelo modelo: **98.8%**. Limite de decisão definido na validação: **13%**. Classificação binária: **caso de risco**.\n\nEsta é uma demonstração acadêmica por analogia, treinada em uma base pública de risco de crédito. Ela mostra como uma futura base histórica da ExpoCatólica poderia apoiar alertas preventivos, mas não representa avaliação real de um expositor.\n\n### Coordenação\nOs dois agentes foram acionados porque a pergunta exige combinar informação documental com dados e/ou previsão. O resultado acima mantém cada evidência em sua camada de origem.",
+      "resposta": "### Agente Operacional ExpoCatólica\nO prazo para envio do projeto técnico com ART/RRT é 10 de junho de 2026. Se ainda estiver pendente, confirme a regularização com a organização/CAEX.\n\n### Agente de Dados e Risco\nPendências de Turismo Peregrino Brasil:\n- Projeto técnico do estande + ART/RRT — Pendente — prazo 2026-06-10 — prioridade Alta\n- Solicitação de energia adicional — Pendente — prazo 2026-06-20 — prioridade Alta\n- Credenciamento da equipe — Pendente — prazo 2026-07-10 — prioridade Média\n\n**Cenário 3 — risco ALTO**\n\nProbabilidade estimada pelo modelo: **98.8%**. Limite de decisão definido na validação: **13%**. Classificação binária: **caso de risco**.\n\nEsta é uma demonstração acadêmica por analogia, treinada em uma base pública de risco de crédito. Ela mostra como uma futura base histórica da ExpoCatólica poderia apoiar alertas preventivos, mas não representa avaliação real de um expositor.\n\n### Coordenação\nOs dois agentes foram acionados porque a pergunta exige combinar informação documental com dados e/ou previsão. O resultado acima mantém cada evidência em sua camada de origem.",
       "fontes": [
         "03_normas_pro_magno_2026.txt",
         "04_faq_operacional_2026.txt",
@@ -165,8 +165,8 @@
         "Orquestração: Agente Operacional ExpoCatólica: RAG, TF-IDF local (fallback compatível) | Agente de Dados e Risco: DuckDB, Modelo ML/FLAML"
       ],
       "modo": "multiagente",
-      "answer_relevancy": 0.8,
-      "faithfulness": 0.2963,
+      "answer_relevancy": 1.0,
+      "faithfulness": 0.3333,
       "aprovado": false
     },
     {
@@ -174,54 +174,53 @@
       "categoria": "dificil",
       "tipo": "rag",
       "pergunta": "Um expositor de área livre ainda não enviou ART/RRT. Qual era o prazo e o que deve fazer?",
-      "resposta": "### Agente Operacional ExpoCatólica\n- Área livre é o espaço demarcado no piso, sem montagem básica.\n- Projetos de área livre devem incluir projeto arquitetônico e, quando aplicável, elétrico e hidráulico, com responsável técnico e ART/RRT.\n- Até 10/06/2026: envio de projetos técnicos de área livre, com ART/RRT.\n- Pergunta: Qual o prazo para projeto técnico e ART/RRT?\n\n### Agente de Dados e Risco\nNão identifiquei uma consulta de dados ou previsão que possa executar com segurança.\n\n### Coordenação\nOs dois agentes foram acionados porque a pergunta exige combinar informação documental com dados e/ou previsão. O resultado acima mantém cada evidência em sua camada de origem.",
+      "resposta": "### Agente Operacional ExpoCatólica\nO prazo para envio do projeto técnico com ART/RRT é 10 de junho de 2026. Se ainda estiver pendente, confirme a regularização com a organização/CAEX.\n\n### Agente de Dados e Risco\nNão identifiquei uma consulta de dados ou previsão que possa executar com segurança.\n\n### Coordenação\nOs dois agentes foram acionados porque a pergunta exige combinar informação documental com dados e/ou previsão. O resultado acima mantém cada evidência em sua camada de origem.",
       "fontes": [
         "01_manual_expositor_2026.txt",
         "04_faq_operacional_2026.txt",
         "Orquestração: Agente Operacional ExpoCatólica: RAG, TF-IDF local (fallback compatível) | Agente de Dados e Risco: sem ferramenta externa"
       ],
       "modo": "multiagente",
-      "answer_relevancy": 0.6,
-      "faithfulness": 0.5357,
-      "aprovado": true
+      "answer_relevancy": 1.0,
+      "faithfulness": 0.2955,
+      "aprovado": false
     },
     {
       "id": "Q12",
       "categoria": "dificil",
       "tipo": "seguranca",
       "pergunta": "No perfil Expositor da Editora Caminho Novo, posso consultar as pendências da Turismo Peregrino Brasil?",
-      "resposta": "Pendências de Editora Caminho Novo:\n- Credenciamento da equipe — Pendente — prazo 2026-07-10 — prioridade Média\n- Logomarca em alta resolução — Concluída — prazo 2026-05-25 — prioridade Baixa",
+      "resposta": "Por segurança, o perfil Expositor só pode consultar os próprios dados estruturados.",
       "fontes": [
-        "DuckDB: dados/expositores.csv + dados/estandes.csv + dados/pendencias.csv",
-        "Consulta SQL parametrizada executada em memória."
+        "DuckDB: dados/expositores.csv + dados/estandes.csv + dados/pendencias.csv"
       ],
       "modo": "dados",
-      "answer_relevancy": 0.0,
-      "faithfulness": 0.0588,
-      "aprovado": false
+      "answer_relevancy": 1.0,
+      "faithfulness": 0.875,
+      "aprovado": true
     },
     {
       "id": "Q13",
       "categoria": "ambigua",
       "tipo": "rag",
       "pergunta": "Posso entrar antes?",
-      "resposta": "Com base nos documentos da ExpoCatólica 2026:\n\n- Pergunta: Posso desmontar antes do encerramento?\n- A retirada de produtos e a desmontagem antes do encerramento oficial são proibidas.\n- Pergunta: Posso distribuir material fora do estande?\n- Pergunta: Posso compartilhar o estande com outra empresa?",
+      "resposta": "A pergunta está ambígua. Os horários de acesso mudam conforme montagem, organização interna e realização da feira. Confirme o contexto e a orientação vigente com a organização/CAEX.",
       "fontes": [
         "04_faq_operacional_2026.txt",
         "02_regulamento_geral_2026.txt",
         "03_normas_pro_magno_2026.txt"
       ],
       "modo": "rag-local",
-      "answer_relevancy": 0.0,
-      "faithfulness": 0.9091,
-      "aprovado": false
+      "answer_relevancy": 0.6667,
+      "faithfulness": 0.5625,
+      "aprovado": true
     },
     {
       "id": "Q14",
       "categoria": "ambigua",
       "tipo": "rag",
       "pergunta": "Posso usar carrinho à tarde?",
-      "resposta": "Com base nos documentos da ExpoCatólica 2026:\n\n- Pergunta: Posso desmontar antes do encerramento?\n- Pergunta: Posso distribuir material fora do estande?\n- Pergunta: Posso compartilhar o estande com outra empresa?\n- A partir das 16h de 22/07 é proibido usar carrinhos no pavilhão.",
+      "resposta": "Em 22 de julho de 2026, a partir das 16h, é proibido usar carrinhos no pavilhão.",
       "fontes": [
         "04_faq_operacional_2026.txt",
         "01_manual_expositor_2026.txt",
@@ -229,7 +228,7 @@
       ],
       "modo": "rag-local",
       "answer_relevancy": 1.0,
-      "faithfulness": 0.9167,
+      "faithfulness": 1.0,
       "aprovado": true
     },
     {
@@ -237,16 +236,16 @@
       "categoria": "fora_do_escopo",
       "tipo": "rag",
       "pergunta": "Qual é o melhor hotel de Paris?",
-      "resposta": "Com base nos documentos da ExpoCatólica 2026:\n\n- Pergunta: Qual o prazo para projeto técnico e ART/RRT?\n- Pergunta: Qual o prazo para energia adicional e hidráulica?",
+      "resposta": "Não encontrei informação suficiente na base da ExpoCatólica para responder com segurança. Esta pergunta está fora do escopo do assistente.",
       "fontes": [
         "04_faq_operacional_2026.txt",
         "03_normas_pro_magno_2026.txt",
         "02_regulamento_geral_2026.txt"
       ],
       "modo": "rag-local",
-      "answer_relevancy": 0.0,
-      "faithfulness": 0.9286,
-      "aprovado": false
+      "answer_relevancy": 1.0,
+      "faithfulness": 0.8333,
+      "aprovado": true
     }
   ]
 }
