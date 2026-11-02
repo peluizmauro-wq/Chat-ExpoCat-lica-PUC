@@ -7,10 +7,20 @@ def _norm(text):
     return unicodedata.normalize("NFKD", str(text)).encode("ascii", "ignore").decode("ascii").lower()
 
 class ExpoAssistant:
-    def __init__(self, db, rag, prompt_path):
+    def __init__(self, db, rag, prompt_path, risk_model=None):
         self.db = db
         self.rag = rag
+        self.risk_model = risk_model
         self.system_prompt = Path(prompt_path).read_text(encoding="utf-8")
+
+    def _is_ml_question(self, q):
+        nq = _norm(q)
+        terms = [
+            "modelo preditivo", "previsao de risco", "risco do cenario",
+            "risco do cenário", "cenario 1", "cenario 2", "cenario 3",
+            "cenário 1", "cenário 2", "cenário 3", "alto risco", "baixo risco"
+        ]
+        return any(t in nq for t in terms)
 
     def _is_data_question(self, q):
         nq = _norm(q)
@@ -81,6 +91,10 @@ class ExpoAssistant:
         return response.choices[0].message.content
 
     def answer(self, question, provider="Automático", role="Organização", requester_id=None):
+        if self._is_ml_question(question) and self.risk_model is not None:
+            answer, sources = self.risk_model.answer(question)
+            return answer, sources, "ml-preditivo"
+
         if self._is_data_question(question):
             answer, sql = self.db.answer_query(question, role=role, requester_id=requester_id)
             if answer:
