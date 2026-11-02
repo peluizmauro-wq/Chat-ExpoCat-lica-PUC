@@ -151,3 +151,5 @@ que o sistema considerou um caso de baixo risco quando ele, na realidade, exigia
 
 if __name__ == "__main__":
     main()
+
+# Gatilho de treinamento automático da Etapa 2.
