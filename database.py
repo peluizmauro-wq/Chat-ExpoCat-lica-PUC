@@ -41,6 +41,18 @@ class ExpoDatabase:
 
     def answer_query(self, question: str, role="Organização", requester_id=None):
         q = _norm(question)
+
+        if role == "Expositor" and requester_id:
+            mentioned = [
+                item for item in self.exhibitors()
+                if _norm(item["nome"]) in q
+            ]
+            if any(item["id"] != requester_id for item in mentioned):
+                return (
+                    "Por segurança, o perfil Expositor só pode consultar os próprios dados estruturados.",
+                    None,
+                )
+
         target = self.find_exhibitor(question)
 
         if ("quant" in q and "expositor" in q and ("pend" in q or "abert" in q)):
