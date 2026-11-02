@@ -9,6 +9,7 @@ from rag_engine import RAGEngine
 from assistant_engine import ExpoAssistant
 from ml_engine import ExpoRiskModel
 from agents import OperationalAgent, RiskDataAgent, MultiAgentCoordinator
+from observability import Observability
 
 ROOT = Path(__file__).parent
 load_dotenv(ROOT / ".env")
@@ -21,13 +22,16 @@ st.set_page_config(
 
 @st.cache_resource
 def services():
+    observability = Observability()
     db = ExpoDatabase(ROOT / "dados")
     rag = RAGEngine(ROOT / "documentos", ROOT / "chroma_db")
     risk_model = ExpoRiskModel(ROOT / "ml" / "model")
 
-    operational_agent = OperationalAgent(rag)
-    risk_agent = RiskDataAgent(db, risk_model)
-    coordinator = MultiAgentCoordinator(operational_agent, risk_agent)
+    operational_agent = OperationalAgent(rag, observability=observability)
+    risk_agent = RiskDataAgent(db, risk_model, observability=observability)
+    coordinator = MultiAgentCoordinator(
+        operational_agent, risk_agent, observability=observability
+    )
 
     assistant = ExpoAssistant(
         db,
@@ -35,10 +39,11 @@ def services():
         ROOT / "system_prompt.txt",
         risk_model=risk_model,
         coordinator=coordinator,
+        observability=observability,
     )
-    return db, rag, risk_model, coordinator, assistant
+    return observability, db, rag, risk_model, coordinator, assistant
 
-db, rag, risk_model, coordinator, assistant = services()
+observability, db, rag, risk_model, coordinator, assistant = services()
 
 st.title("Assistente ao Expositor — ExpoCatólica 2026")
 st.caption("Protótipo acadêmico | AI Factory: Building Intelligent Systems")
@@ -66,6 +71,7 @@ with st.sidebar:
     st.write(f"**Chave de LLM:** {'configurada' if has_key else 'não configurada'}")
     st.write(f"**Modelo preditivo:** {'disponível' if risk_model.available else 'aguardando treinamento'}")
     st.write("**Agentes:** 2 especializados + coordenador")
+    st.write(f"**Langfuse:** {'ativo' if observability.enabled else 'aguardando chaves'}")
     if risk_model.available:
         st.caption(risk_model.describe())
 
@@ -75,10 +81,6 @@ with st.sidebar:
     st.code("Quais são as datas e horários de montagem?")
     st.caption("Machine Learning")
     st.code("Analise o risco do cenário 3.")
-    st.caption("Agente Operacional")
-    st.code("Use o Agente Operacional e informe o prazo do projeto técnico.")
-    st.caption("Agente de Dados e Risco")
-    st.code("Use o Agente de Dados e Risco e analise o risco do cenário 3.")
     st.caption("Tarefa multiagente")
     st.code(
         "Faça uma análise integrada: consulte as pendências da Turismo Peregrino Brasil, "
@@ -122,13 +124,25 @@ if question:
         st.markdown(question)
 
     with st.chat_message("assistant"):
-        with st.spinner("Coordenando documentos, dados, modelo e agentes..."):
-            answer, sources, mode = assistant.answer(
-                question,
-                provider=provider,
-                role=role,
-                requester_id=requester_id,
-            )
+        with st.spinner("Coordenando documentos, dados, modelo, agentes e observabilidade..."):
+            with observability.trace(
+                "chat-expocatolica",
+                input_data=question,
+                metadata={"role": role, "provider": provider}
+            ) as trace_holder:
+                answer, sources, mode = assistant.answer(
+                    question,
+                    provider=provider,
+                    role=role,
+                    requester_id=requester_id,
+                )
+                observability.finish(
+                    trace_holder,
+                    output=answer,
+                    metadata={"mode": mode, "sources": sources}
+                )
+            observability.flush()
+
         st.write_stream(stream_words(answer))
         if sources:
             with st.expander("Fontes e ferramentas"):
