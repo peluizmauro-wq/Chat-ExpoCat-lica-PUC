@@ -74,6 +74,14 @@ def main():
         evidence = "\n".join(c["text"] for c in contexts)
         evidence += "\n" + item["resposta_esperada"]
 
+        if item["tipo"] in ("ml", "multiagente"):
+            metrics_path = ROOT/"ml"/"model"/"metrics.json"
+            scenarios_path = ROOT/"ml"/"model"/"scenarios.json"
+            if metrics_path.exists():
+                evidence += "\n" + metrics_path.read_text(encoding="utf-8")
+            if scenarios_path.exists():
+                evidence += "\n" + scenarios_path.read_text(encoding="utf-8")
+
         ar = relevancy(answer, item["termos_esperados"])
         faith = faithfulness(answer, evidence)
         passed = ar >= 0.50 and faith >= 0.45
