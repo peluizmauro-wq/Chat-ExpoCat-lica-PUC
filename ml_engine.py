@@ -76,12 +76,19 @@ class ExpoRiskModel:
         row = pd.DataFrame([scenario["features"]]).reindex(columns=columns, fill_value=0)
         automl = self.bundle["automl"]
         prob = float(automl.predict_proba(row)[:, 1][0])
-        classe = int(prob >= 0.5)
-        nivel = "ALTO" if prob >= 0.65 else ("MÉDIO" if prob >= 0.35 else "BAIXO")
+        threshold = float(self.bundle.get("threshold", 0.5))
+        classe = int(prob >= threshold)
+        if prob >= max(0.50, threshold * 2):
+            nivel = "ALTO"
+        elif prob >= threshold:
+            nivel = "ATENÇÃO"
+        else:
+            nivel = "BAIXO"
 
         text = (
             f"**{scenario['nome']} — risco {nivel}**\n\n"
             f"Probabilidade estimada pelo modelo: **{prob:.1%}**. "
+            f"Limite de decisão definido na validação: **{threshold:.0%}**. "
             f"Classificação binária: **{'caso de risco' if classe else 'caso sem risco'}**.\n\n"
             "Esta é uma demonstração acadêmica por analogia, treinada em uma base pública de risco de crédito. "
             "Ela mostra como uma futura base histórica da ExpoCatólica poderia apoiar alertas preventivos, "
