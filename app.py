@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from database import ExpoDatabase
 from rag_engine import RAGEngine
 from assistant_engine import ExpoAssistant
+from ml_engine import ExpoRiskModel
 
 ROOT = Path(__file__).parent
 load_dotenv(ROOT / ".env")
@@ -21,10 +22,13 @@ st.set_page_config(
 def services():
     db = ExpoDatabase(ROOT / "dados")
     rag = RAGEngine(ROOT / "documentos", ROOT / "chroma_db")
-    assistant = ExpoAssistant(db, rag, ROOT / "system_prompt.txt")
-    return db, rag, assistant
+    risk_model = ExpoRiskModel(ROOT / "ml" / "model")
+    assistant = ExpoAssistant(
+        db, rag, ROOT / "system_prompt.txt", risk_model=risk_model
+    )
+    return db, rag, risk_model, assistant
 
-db, rag, assistant = services()
+db, rag, risk_model, assistant = services()
 
 st.title("Assistente ao Expositor — ExpoCatólica 2026")
 st.caption("Protótipo acadêmico | AI Factory: Building Intelligent Systems")
@@ -50,24 +54,28 @@ with st.sidebar:
     st.write(f"**RAG:** {rag.backend}")
     has_key = bool(os.getenv("OPENAI_API_KEY", "").strip())
     st.write(f"**Chave de LLM:** {'configurada' if has_key else 'não configurada'}")
+    st.write(f"**Modelo preditivo:** {'disponível' if risk_model.available else 'aguardando treinamento'}")
+    if risk_model.available:
+        st.caption(risk_model.describe())
 
     st.divider()
     st.markdown("**Perguntas para testar**")
     st.caption("RAG")
     st.code("Quais são as datas e horários de montagem?")
-    st.code("Até quando posso solicitar energia adicional e hidráulica?")
     st.code("Posso compartilhar meu estande com outra marca?")
     st.caption("Dados")
     st.code("Qual é o estande e a metragem da Editora Caminho Novo?")
-    st.code("Quais pendências estão abertas para a Turismo Peregrino Brasil?")
+    st.caption("Machine Learning")
+    st.code("Mostre os cenários do modelo preditivo.")
+    st.code("Analise o risco do cenário 3.")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "assistant",
             "content": (
-                "Olá! Posso consultar regras e prazos da ExpoCatólica 2026 e também "
-                "os dados fictícios de expositores, estandes e pendências usados nesta demonstração."
+                "Olá! Posso consultar regras e prazos da ExpoCatólica 2026, dados fictícios "
+                "de expositores e também demonstrar um modelo preditivo de classificação de risco."
             ),
             "sources": [],
             "mode": "inicial",
@@ -98,7 +106,7 @@ if question:
         st.markdown(question)
 
     with st.chat_message("assistant"):
-        with st.spinner("Consultando documentos e dados..."):
+        with st.spinner("Consultando documentos, dados e modelos..."):
             answer, sources, mode = assistant.answer(
                 question,
                 provider=provider,
@@ -118,6 +126,7 @@ if question:
 
 st.divider()
 st.caption(
-    "Dados tabulares são fictícios e destinados à demonstração acadêmica. "
-    "O protótipo não substitui o Manual do Expositor, o Regulamento Geral ou orientações oficiais da organização."
+    "Dados tabulares e cenários de ML são destinados à demonstração acadêmica. "
+    "O modelo preditivo usa uma base pública de risco por analogia e não representa avaliação real de expositores. "
+    "O protótipo não substitui os documentos oficiais nem a orientação da organização."
 )
