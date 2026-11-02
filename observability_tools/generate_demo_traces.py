@@ -20,6 +20,18 @@ def main():
             "LANGFUSE_SECRET_KEY e LANGFUSE_BASE_URL."
         )
 
+    # Validação explícita de autenticação para evitar falso positivo no workflow.
+    try:
+        ok = obs.client.auth_check()
+    except Exception as exc:
+        raise RuntimeError(f"Falha ao validar autenticação no Langfuse: {exc}") from exc
+    if not ok:
+        raise RuntimeError(
+            "Langfuse recusou as credenciais. Atualize PUBLIC_KEY e SECRET_KEY "
+            "com um par novo criado no mesmo projeto."
+        )
+    print("OK: autenticação Langfuse validada.")
+
     db = ExpoDatabase(ROOT / "dados")
     rag = RAGEngine(ROOT / "documentos", ROOT / "chroma_db")
     risk_model = ExpoRiskModel(ROOT / "ml" / "model")
