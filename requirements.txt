@@ -10,3 +10,4 @@ joblib>=1.5
 flaml[automl]==2.7.0
 lightgbm>=4.6
 xgboost>=3.1
+langfuse>=4.0
