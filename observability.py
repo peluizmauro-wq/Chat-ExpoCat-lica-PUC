@@ -15,8 +15,16 @@ class Observability:
         self._init_client()
 
     def _init_client(self):
-        public_key = os.getenv("LANGFUSE_PUBLIC_KEY", "").strip()
-        secret_key = os.getenv("LANGFUSE_SECRET_KEY", "").strip()
+        def clean_env(name):
+            value = os.getenv(name, "").strip()
+            value = value.strip('"').strip("'").strip()
+            if value:
+                os.environ[name] = value
+            return value
+
+        public_key = clean_env("LANGFUSE_PUBLIC_KEY")
+        secret_key = clean_env("LANGFUSE_SECRET_KEY")
+        base_url = clean_env("LANGFUSE_BASE_URL")
         if not public_key or not secret_key:
             return
         try:
