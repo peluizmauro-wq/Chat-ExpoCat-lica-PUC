@@ -2,6 +2,9 @@ name: Gerar traces Langfuse - Etapa 2
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "observability_tools/TRIGGER.txt"
 
 jobs:
   traces:
