@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 import joblib
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
@@ -17,7 +18,6 @@ MODEL_DIR.mkdir(parents=True, exist_ok=True)
 FEATURE_NAMES = [f"Attribute{i}" for i in range(1, 21)]
 COLUMNS = FEATURE_NAMES + ["target"]
 
-# Atributos categóricos conforme a documentação oficial do UCI.
 CATEGORICAL = [
     "Attribute1", "Attribute3", "Attribute4", "Attribute6", "Attribute7",
     "Attribute9", "Attribute10", "Attribute12", "Attribute14", "Attribute15",
@@ -28,18 +28,38 @@ def load_data():
     df = pd.read_csv(DATA_PATH, sep=r"\s+", header=None, names=COLUMNS)
     # UCI: 1 = bom risco, 2 = mau risco. Aqui usamos 1 = risco (classe positiva).
     df["target"] = (df["target"] == 2).astype(int)
-
-    X = df[FEATURE_NAMES].copy()
+    X = pd.get_dummies(df[FEATURE_NAMES].copy(), columns=CATEGORICAL, dtype=int)
     y = df["target"].copy()
-
-    X = pd.get_dummies(X, columns=CATEGORICAL, dtype=int)
     return X, y
+
+def escolher_threshold(y_true, probabilities):
+    """
+    A documentação do dataset usa custo 5 para classificar um mau risco como bom
+    e custo 1 para o erro inverso. Escolhemos o threshold no conjunto de validação,
+    nunca no teste, para respeitar essa assimetria.
+    """
+    candidates = np.linspace(0.10, 0.70, 61)
+    best = None
+    for threshold in candidates:
+        pred = (probabilities >= threshold).astype(int)
+        tn, fp, fn, tp = confusion_matrix(y_true, pred, labels=[0, 1]).ravel()
+        cost = (5 * fn) + fp
+        recall = recall_score(y_true, pred, zero_division=0)
+        precision = precision_score(y_true, pred, zero_division=0)
+        item = (cost, -recall, -precision, float(threshold))
+        if best is None or item < best:
+            best = item
+    return round(best[3], 2)
 
 def main():
     X, y = load_data()
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.20, random_state=42, stratify=y
+    # 70% treino, 10% validação para threshold, 20% teste final.
+    X_train, X_temp, y_train, y_temp = train_test_split(
+        X, y, test_size=0.30, random_state=42, stratify=y
+    )
+    X_val, X_test, y_val, y_test = train_test_split(
+        X_temp, y_temp, test_size=2/3, random_state=42, stratify=y_temp
     )
 
     automl = AutoML()
@@ -54,29 +74,34 @@ def main():
         verbose=0,
     )
 
-    y_pred = automl.predict(X_test)
+    val_prob = automl.predict_proba(X_val)[:, 1]
+    threshold = escolher_threshold(y_val, val_prob)
+
     y_prob = automl.predict_proba(X_test)[:, 1]
+    y_pred = (y_prob >= threshold).astype(int)
 
     metrics = {
         "dataset": "Statlog (German Credit Data) - UCI 144",
         "registros": int(len(X)),
         "atributos_originais": 20,
         "treino": int(len(X_train)),
+        "validacao": int(len(X_val)),
         "teste": int(len(X_test)),
         "classe_positiva": "mau risco (1)",
         "modelo_selecionado": str(automl.best_estimator),
+        "threshold_escolhido": threshold,
+        "criterio_threshold": "minimizar custo: 5 x falso negativo + 1 x falso positivo",
         "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
         "precision": round(float(precision_score(y_test, y_pred, zero_division=0)), 4),
         "recall": round(float(recall_score(y_test, y_pred, zero_division=0)), 4),
         "f1": round(float(f1_score(y_test, y_pred, zero_division=0)), 4),
         "roc_auc": round(float(roc_auc_score(y_test, y_prob)), 4),
-        "confusion_matrix": confusion_matrix(y_test, y_pred).tolist(),
+        "confusion_matrix": confusion_matrix(y_test, y_pred, labels=[0, 1]).tolist(),
         "random_state": 42,
-        "test_size": 0.20,
         "time_budget_seconds": 45,
         "nota_contextual": (
-            "No projeto ExpoCatólica, recall é uma métrica importante porque um falso "
-            "negativo representa deixar passar um caso de risco que precisaria de atenção preventiva."
+            "No projeto ExpoCatólica, recall é prioritário porque um falso negativo "
+            "representa deixar passar um caso de risco que precisaria de atenção preventiva."
         ),
     }
 
@@ -85,11 +110,11 @@ def main():
             "automl": automl,
             "feature_columns": X.columns.tolist(),
             "categorical_columns": CATEGORICAL,
+            "threshold": threshold,
         },
         MODEL_DIR / "risk_model.joblib",
     )
 
-    # Três cenários reais do conjunto de teste: menor, intermediário e maior risco previsto.
     scored = X_test.copy()
     scored["probabilidade"] = y_prob
     scored["target_real"] = y_test.values
@@ -126,8 +151,10 @@ def main():
 
 Dataset: {metrics['dataset']}
 Registros: {metrics['registros']}
-Divisão: {metrics['treino']} treino / {metrics['teste']} teste
+Divisão: {metrics['treino']} treino / {metrics['validacao']} validação / {metrics['teste']} teste
 Modelo selecionado automaticamente pelo FLAML: {metrics['modelo_selecionado']}
+Threshold escolhido no conjunto de validação: {metrics['threshold_escolhido']}
+Critério: {metrics['criterio_threshold']}
 
 ## Métricas no conjunto de teste
 
@@ -143,13 +170,12 @@ Este modelo é uma demonstração acadêmica por analogia. A base pública class
 No projeto ExpoCatólica, usamos a mesma lógica de classificação binária para demonstrar como
 uma futura base histórica de expositores poderia apoiar alertas preventivos.
 
-A métrica que destacamos no contexto do projeto é o recall, porque um falso negativo significa
-que o sistema considerou um caso de baixo risco quando ele, na realidade, exigia atenção.
+A métrica que destacamos é o recall. A própria base UCI atribui custo maior ao erro de considerar
+como bom risco um caso que, na realidade, é mau risco. Por analogia, no projeto ExpoCatólica,
+queremos reduzir a chance de deixar passar sem alerta um expositor que precisaria de atenção.
 """
     (MODEL_DIR / "RESULTADO_TREINAMENTO.md").write_text(summary, encoding="utf-8")
     print(json.dumps(metrics, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
     main()
-
-# Gatilho de treinamento automático da Etapa 2.
