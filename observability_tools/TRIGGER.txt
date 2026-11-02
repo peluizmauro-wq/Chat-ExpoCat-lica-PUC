@@ -1,2 +1,3 @@
 Disparo de geração de traces Langfuse - Etapa 2\nVersão otimizada\nNovo disparo após configuração dos repository secrets.
 Disparo após correção da URL do Langfuse Cloud.
+Disparo após atualização do novo par de chaves Langfuse.
