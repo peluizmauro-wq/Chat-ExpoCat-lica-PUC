@@ -1,1 +1,1 @@
-Disparo de geração de traces Langfuse - Etapa 2
+Disparo de geração de traces Langfuse - Etapa 2\nVersão otimizada\n
