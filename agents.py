@@ -16,8 +16,9 @@ class OperationalAgent:
     name = "Agente Operacional ExpoCatólica"
     role = "Especialista em regras, prazos, montagem, desmontagem e normas do evento"
 
-    def __init__(self, rag):
+    def __init__(self, rag, observability=None):
         self.rag = rag
+        self.observability = observability
 
     def _summarize(self, question, contexts):
         words = {w for w in re.findall(r"\w+", _norm(question)) if len(w) > 3}
@@ -47,12 +48,31 @@ class OperationalAgent:
         return "\n".join(f"- {sent}" for sent, _ in chosen)
 
     def run(self, question):
-        contexts = self.rag.search(question, k=4)
-        sources = []
-        for c in contexts:
-            if c["source"] not in sources:
-                sources.append(c["source"])
-        answer = self._summarize(question, contexts)
+        if self.observability:
+            with self.observability.span(
+                "agente-operacional-rag",
+                input_data=question,
+                metadata={"agent": self.name, "tool": "RAG"}
+            ) as span:
+                contexts = self.rag.search(question, k=4)
+                sources = []
+                for c in contexts:
+                    if c["source"] not in sources:
+                        sources.append(c["source"])
+                answer = self._summarize(question, contexts)
+                if span is not None:
+                    span.update(
+                        output=answer,
+                        metadata={"sources": sources, "rag_backend": self.rag.backend}
+                    )
+        else:
+            contexts = self.rag.search(question, k=4)
+            sources = []
+            for c in contexts:
+                if c["source"] not in sources:
+                    sources.append(c["source"])
+            answer = self._summarize(question, contexts)
+
         return AgentResult(
             agent=self.name,
             answer=answer,
@@ -64,9 +84,10 @@ class RiskDataAgent:
     name = "Agente de Dados e Risco"
     role = "Analista de dados estruturados e demonstrações de classificação preditiva"
 
-    def __init__(self, db, risk_model):
+    def __init__(self, db, risk_model, observability=None):
         self.db = db
         self.risk_model = risk_model
+        self.observability = observability
 
     def run(self, question, role="Organização", requester_id=None):
         parts = []
@@ -80,9 +101,21 @@ class RiskDataAgent:
             "contrato", "cidade", "segmento"
         )
         if target or any(t in q for t in data_terms):
-            data_answer, sql = self.db.answer_query(
-                question, role=role, requester_id=requester_id
-            )
+            if self.observability:
+                with self.observability.span(
+                    "agente-dados-duckdb",
+                    input_data=question,
+                    metadata={"agent": self.name, "tool": "DuckDB"}
+                ) as span:
+                    data_answer, sql = self.db.answer_query(
+                        question, role=role, requester_id=requester_id
+                    )
+                    if span is not None:
+                        span.update(output=data_answer or "sem resultado")
+            else:
+                data_answer, sql = self.db.answer_query(
+                    question, role=role, requester_id=requester_id
+                )
             if data_answer:
                 parts.append(data_answer)
                 sources.append("DuckDB: dados estruturados da demonstração")
@@ -93,7 +126,17 @@ class RiskDataAgent:
             "previsao", "previsão", "classificacao", "classificação"
         )
         if self.risk_model is not None and any(t in q for t in ml_terms):
-            ml_answer, ml_sources = self.risk_model.answer(question)
+            if self.observability:
+                with self.observability.span(
+                    "agente-risco-modelo-ml",
+                    input_data=question,
+                    metadata={"agent": self.name, "tool": "FLAML/LightGBM"}
+                ) as span:
+                    ml_answer, ml_sources = self.risk_model.answer(question)
+                    if span is not None:
+                        span.update(output=ml_answer)
+            else:
+                ml_answer, ml_sources = self.risk_model.answer(question)
             parts.append(ml_answer)
             sources.extend(ml_sources)
             tools.append("Modelo ML/FLAML")
@@ -113,9 +156,10 @@ class RiskDataAgent:
 class MultiAgentCoordinator:
     name = "Coordenador Multiagente"
 
-    def __init__(self, operational_agent, risk_agent):
+    def __init__(self, operational_agent, risk_agent, observability=None):
         self.operational_agent = operational_agent
         self.risk_agent = risk_agent
+        self.observability = observability
 
     def _needs_operational(self, question):
         q = _norm(question)
@@ -145,37 +189,56 @@ class MultiAgentCoordinator:
         return explicit or (self._needs_operational(question) and self._needs_risk(question))
 
     def run(self, question, role="Organização", requester_id=None):
-        results = []
-        if self._needs_operational(question) or "agente operacional" in _norm(question):
-            results.append(self.operational_agent.run(question))
-        if self._needs_risk(question) or any(
-            x in _norm(question) for x in ("agente de dados", "agente de risco")
-        ):
-            results.append(
-                self.risk_agent.run(question, role=role, requester_id=requester_id)
+        if self.observability:
+            context = self.observability.span(
+                "coordenador-multiagente",
+                input_data=question,
+                metadata={"component": self.name}
             )
+        else:
+            from contextlib import nullcontext
+            context = nullcontext(None)
 
-        if not results:
-            return None
+        with context as coord_span:
+            results = []
+            if self._needs_operational(question) or "agente operacional" in _norm(question):
+                results.append(self.operational_agent.run(question))
+            if self._needs_risk(question) or any(
+                x in _norm(question) for x in ("agente de dados", "agente de risco")
+            ):
+                results.append(
+                    self.risk_agent.run(question, role=role, requester_id=requester_id)
+                )
 
-        blocks = []
-        all_sources = []
-        actions = []
-        for r in results:
-            blocks.append(f"### {r.agent}\n{r.answer}")
-            all_sources.extend(r.sources)
-            actions.append(
-                f"{r.agent}: " + ", ".join(r.tools_used or ["sem ferramenta externa"])
-            )
+            if not results:
+                return None
 
-        if len(results) > 1:
-            blocks.append(
-                "### Coordenação\n"
-                "Os dois agentes foram acionados porque a pergunta exige combinar "
-                "informação documental com dados e/ou previsão. O resultado acima mantém "
-                "cada evidência em sua camada de origem."
-            )
+            blocks = []
+            all_sources = []
+            actions = []
+            for r in results:
+                blocks.append(f"### {r.agent}\n{r.answer}")
+                all_sources.extend(r.sources)
+                actions.append(
+                    f"{r.agent}: " + ", ".join(r.tools_used or ["sem ferramenta externa"])
+                )
 
-        sources = list(dict.fromkeys(all_sources))
-        sources.append("Orquestração: " + " | ".join(actions))
-        return "\n\n".join(blocks), sources, "multiagente"
+            if len(results) > 1:
+                blocks.append(
+                    "### Coordenação\n"
+                    "Os dois agentes foram acionados porque a pergunta exige combinar "
+                    "informação documental com dados e/ou previsão. O resultado acima mantém "
+                    "cada evidência em sua camada de origem."
+                )
+
+            sources = list(dict.fromkeys(all_sources))
+            sources.append("Orquestração: " + " | ".join(actions))
+            answer = "\n\n".join(blocks)
+
+            if coord_span is not None:
+                coord_span.update(
+                    output=answer,
+                    metadata={"agents_used": [r.agent for r in results]}
+                )
+
+            return answer, sources, "multiagente"
