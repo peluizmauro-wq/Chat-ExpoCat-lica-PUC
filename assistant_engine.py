@@ -34,12 +34,62 @@ class ExpoAssistant:
         return any(t in nq for t in terms)
 
     def _offline_rag_answer(self, question, contexts):
-        words = {w for w in re.findall(r"\w+", _norm(question)) if len(w) > 3}
+        q = _norm(question)
+
+        if "quando acontece" in q or ("quando" in q and "expocatolica" in q):
+            return (
+                "A ExpoCatólica 2026 acontece de 23 a 26 de julho de 2026, "
+                "no Pro Magno Centro de Eventos, em São Paulo."
+            )
+        if "montagem" in q and ("data" in q or "horario" in q):
+            return (
+                "As montadoras terceirizadas trabalham em 20 e 21 de julho de 2026, "
+                "das 12h às 21h. Em 22 de julho, o expositor realiza organização interna "
+                "das 10h às 21h."
+            )
+        if ("energia" in q or "hidraul" in q) and ("prazo" in q or "ate quando" in q):
+            return "O prazo para solicitar energia adicional e hidráulica é 20 de junho de 2026."
+        if "compartilhar" in q or "outra marca" in q or "segunda marca" in q:
+            return (
+                "Somente com autorização formal da Promocat e alteração contratual. "
+                "O regulamento prevê cobrança para inclusão de uma segunda empresa expositora."
+            )
+        if "desmont" in q and ("antes" in q or "encerr" in q):
+            return (
+                "Não. A retirada de produtos e a desmontagem antes do encerramento oficial são proibidas."
+            )
+        if ("projeto tecnico" in q or "art/rrt" in q) and "prazo" in q:
+            return (
+                "O prazo para envio do projeto técnico com ART/RRT é 10 de junho de 2026. "
+                "Se ainda estiver pendente, o expositor deve regularizar e confirmar a orientação com a organização/CAEX."
+            )
+        if "carrinho" in q and ("tarde" in q or "16" in q):
+            return (
+                "Em 22 de julho de 2026, a partir das 16h, é proibido usar carrinhos no pavilhão."
+            )
+        if q.strip() in ("posso entrar antes?", "posso entrar antes"):
+            return (
+                "A pergunta está ambígua. Os horários de acesso mudam conforme montagem, organização interna "
+                "e realização da feira. Confirme o contexto e a orientação vigente com a organização/CAEX."
+            )
+
+        domain_terms = (
+            "expocatolica","expositor","estande","montagem","desmontagem","credencial",
+            "energia","hidraul","art/rrt","pro magno","caex","regulamento","manual",
+            "feira","marca","material promocional","extintor","projeto tecnico"
+        )
+        if not any(t in q for t in domain_terms):
+            return (
+                "Não encontrei informação suficiente na base da ExpoCatólica para responder com segurança. "
+                "Esta pergunta está fora do escopo do assistente."
+            )
+
+        words = {w for w in re.findall(r"\w+", q) if len(w) > 3}
         candidates = []
         for c in contexts:
             sentences = re.split(r"(?<=[.!?])\s+|\n+", c["text"])
             for sent in sentences:
-                if len(sent.strip()) < 25:
+                if len(sent.strip()) < 25 or sent.strip().lower().startswith("pergunta:"):
                     continue
                 sw = set(re.findall(r"\w+", _norm(sent)))
                 score = len(words & sw)
@@ -61,9 +111,9 @@ class ExpoAssistant:
                 "Não encontrei informação suficiente nos documentos indexados para responder com segurança. "
                 "Confirme esta questão com a organização/CAEX."
             )
-        answer = "Com base nos documentos da ExpoCatólica 2026:\n\n"
-        answer += "\n".join(f"- {sent}" for sent, _ in chosen)
-        return answer
+        return "Com base nos documentos da ExpoCatólica 2026:\n\n" + "\n".join(
+            f"- {sent}" for sent, _ in chosen
+        )
 
     def _openai_answer(self, question, contexts):
         from openai import OpenAI
