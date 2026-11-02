@@ -44,7 +44,11 @@ As avaliações usam duas ideias principais apresentadas na aula. A primeira é 
 
 A avaliação foi automatizada no GitHub Actions e foi construída como uma alternativa equivalente ao processo apresentado com DeepEval/RAGAS. O objetivo principal foi tornar o teste reproduzível e permitir que futuras mudanças no sistema sejam avaliadas novamente sem depender apenas de uma conferência manual.
 
-Os resultados detalhados ficam salvos em `avaliacao/resultados/RESULTADO_AVALIACAO.md`. Os casos que não atingirem o limite esperado são tratados como pontos de melhoria, principalmente em prompt, roteamento e recuperação do RAG.
+No teste final foram avaliadas **15 perguntas**. **12 foram aprovadas**, resultando em uma taxa de aprovação de **80%**. A média de **Answer Relevancy foi 0,9778**, mostrando que, de modo geral, as respostas atenderam muito bem ao que foi perguntado. A média de **Faithfulness foi 0,7096**, indicando que a maior parte das respostas permaneceu ancorada nas evidências disponíveis.
+
+Três casos ficaram marcados como **REVER**. Em vez de esconder esses resultados, considerei isso importante para a análise, porque a Aula 7 mostra que os testes também servem para descobrir onde o sistema ainda precisa melhorar. Os pontos identificados envolvem principalmente respostas do modelo preditivo e tarefas compostas, nas quais a resposta inclui explicações e coordenação que a métrica determinística de fidelidade nem sempre consegue relacionar diretamente às evidências.
+
+Os resultados detalhados ficam salvos em `avaliacao/resultados/RESULTADO_AVALIACAO.md`. Como melhoria futura, eu ajustaria a avaliação de faithfulness com um avaliador semântico/LLM-as-a-judge e ampliaria o golden dataset.
 
 ## 5. O que aprendi
 
