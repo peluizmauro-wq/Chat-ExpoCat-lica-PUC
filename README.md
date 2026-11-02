@@ -91,3 +91,36 @@ Nunca publique o arquivo `.env`.
 ## Observação acadêmica
 
 Os dados de expositores deste repositório são **fictícios** e foram criados exclusivamente para a atividade acadêmica.
+
+
+---
+
+## Etapa 2 — Machine Learning preditivo
+
+Foi adicionada uma camada de Machine Learning ao Assistente ao Expositor.
+
+- **Dataset:** Statlog (German Credit Data), UCI Machine Learning Repository, dataset 144.
+- **Tarefa:** classificação binária de risco.
+- **Registros:** 1.000.
+- **Divisão:** 700 treino, 100 validação e 200 teste.
+- **AutoML:** FLAML 2.7.0.
+- **Modelo selecionado automaticamente:** LightGBM.
+- **Threshold:** escolhido no conjunto de validação com custo maior para falsos negativos.
+- **Integração:** perguntas em linguagem natural no mesmo chat.
+
+### Métricas do teste final
+
+- Accuracy: **0,6200**
+- Precision: **0,4298**
+- Recall: **0,8167**
+- F1-score: **0,5632**
+- ROC-AUC: **0,7796**
+
+Neste projeto, o **recall** é a métrica priorizada. A lógica é preventiva: é mais problemático deixar passar sem alerta um caso realmente arriscado do que gerar alguns alertas adicionais. O uso do dataset é acadêmico e por analogia; o modelo não avalia expositores reais.
+
+Exemplos no chat:
+
+```text
+Mostre os cenários do modelo preditivo.
+Analise o risco do cenário 3.
+```
