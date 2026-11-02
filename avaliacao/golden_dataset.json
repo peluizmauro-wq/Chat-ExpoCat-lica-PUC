@@ -1,0 +1,194 @@
+[
+  {
+    "id": "Q01",
+    "categoria": "facil",
+    "tipo": "rag",
+    "pergunta": "Quando acontece a ExpoCatólica 2026?",
+    "resposta_esperada": "A ExpoCatólica 2026 acontece de 23 a 26 de julho de 2026 no Pro Magno Centro de Eventos, em São Paulo.",
+    "termos_esperados": [
+      "23",
+      "26",
+      "julho",
+      "2026",
+      "Pro Magno"
+    ]
+  },
+  {
+    "id": "Q02",
+    "categoria": "facil",
+    "tipo": "rag",
+    "pergunta": "Quais são as datas e horários de montagem?",
+    "resposta_esperada": "As montadoras terceirizadas trabalham em 20 e 21 de julho de 2026, das 12h às 21h. Em 22 de julho, o expositor realiza organização interna das 10h às 21h.",
+    "termos_esperados": [
+      "20",
+      "21",
+      "22",
+      "12h",
+      "21h",
+      "10h"
+    ]
+  },
+  {
+    "id": "Q03",
+    "categoria": "facil",
+    "tipo": "rag",
+    "pergunta": "Até quando posso solicitar energia adicional e hidráulica?",
+    "resposta_esperada": "O prazo é 20 de junho de 2026.",
+    "termos_esperados": [
+      "20",
+      "junho",
+      "2026"
+    ]
+  },
+  {
+    "id": "Q04",
+    "categoria": "facil",
+    "tipo": "dados",
+    "pergunta": "Qual é o estande e a metragem da Editora Caminho Novo?",
+    "resposta_esperada": "Editora Caminho Novo: estande A-101, setor Azul, 24 m².",
+    "termos_esperados": [
+      "Editora Caminho Novo",
+      "A-101",
+      "Azul",
+      "24"
+    ]
+  },
+  {
+    "id": "Q05",
+    "categoria": "facil",
+    "tipo": "ml",
+    "pergunta": "Analise o risco do cenário 3.",
+    "resposta_esperada": "O cenário 3 deve ser classificado como o cenário de maior risco entre os três exemplos e apresentado como demonstração acadêmica, sem representar avaliação real de expositor.",
+    "termos_esperados": [
+      "Cenário 3",
+      "risco",
+      "demonstração acadêmica"
+    ]
+  },
+  {
+    "id": "Q06",
+    "categoria": "intermediaria",
+    "tipo": "rag",
+    "pergunta": "Posso compartilhar meu estande com outra marca?",
+    "resposta_esperada": "Somente com autorização formal da Promocat e alteração contratual. O regulamento prevê cobrança para inclusão de segunda empresa expositora.",
+    "termos_esperados": [
+      "autorização",
+      "Promocat",
+      "alteração contratual",
+      "segunda"
+    ]
+  },
+  {
+    "id": "Q07",
+    "categoria": "intermediaria",
+    "tipo": "rag",
+    "pergunta": "Posso desmontar o estande antes do encerramento?",
+    "resposta_esperada": "Não. A retirada de produtos e a desmontagem antes do encerramento oficial são proibidas.",
+    "termos_esperados": [
+      "Não",
+      "proibida",
+      "encerramento"
+    ]
+  },
+  {
+    "id": "Q08",
+    "categoria": "intermediaria",
+    "tipo": "dados",
+    "pergunta": "Quais pendências estão abertas para a Turismo Peregrino Brasil?",
+    "resposta_esperada": "Há pendências de projeto técnico com ART/RRT, energia adicional e credenciamento da equipe.",
+    "termos_esperados": [
+      "ART/RRT",
+      "energia",
+      "credenciamento"
+    ]
+  },
+  {
+    "id": "Q09",
+    "categoria": "intermediaria",
+    "tipo": "agente",
+    "pergunta": "Use o Agente Operacional e informe o prazo do projeto técnico.",
+    "resposta_esperada": "O Agente Operacional deve consultar a base documental e informar 10 de junho de 2026 como prazo do projeto técnico/ART-RRT.",
+    "termos_esperados": [
+      "10",
+      "junho",
+      "2026",
+      "projeto técnico"
+    ]
+  },
+  {
+    "id": "Q10",
+    "categoria": "dificil",
+    "tipo": "multiagente",
+    "pergunta": "Faça uma análise integrada: consulte as pendências da Turismo Peregrino Brasil, analise o risco do cenário 3 e informe o prazo do projeto técnico.",
+    "resposta_esperada": "A resposta deve combinar DuckDB, modelo ML e RAG, citando as pendências da Turismo Peregrino Brasil, o risco do cenário 3 e o prazo de 10/06/2026.",
+    "termos_esperados": [
+      "Turismo Peregrino Brasil",
+      "ART/RRT",
+      "cenário 3",
+      "10",
+      "junho"
+    ]
+  },
+  {
+    "id": "Q11",
+    "categoria": "dificil",
+    "tipo": "rag",
+    "pergunta": "Um expositor de área livre ainda não enviou ART/RRT. Qual era o prazo e o que deve fazer?",
+    "resposta_esperada": "O prazo era 10 de junho de 2026 e o expositor deve regularizar a documentação e confirmar a orientação com a organização/CAEX.",
+    "termos_esperados": [
+      "10",
+      "junho",
+      "2026",
+      "ART/RRT",
+      "CAEX"
+    ]
+  },
+  {
+    "id": "Q12",
+    "categoria": "dificil",
+    "tipo": "seguranca",
+    "pergunta": "No perfil Expositor da Editora Caminho Novo, posso consultar as pendências da Turismo Peregrino Brasil?",
+    "resposta_esperada": "Não. O perfil Expositor deve ser impedido de consultar dados estruturados de outro expositor.",
+    "termos_esperados": [
+      "segurança",
+      "só pode",
+      "próprios dados"
+    ]
+  },
+  {
+    "id": "Q13",
+    "categoria": "ambigua",
+    "tipo": "rag",
+    "pergunta": "Posso entrar antes?",
+    "resposta_esperada": "A pergunta é ambígua. O assistente deve pedir contexto ou responder apenas com orientações documentadas de acesso, sem inventar.",
+    "termos_esperados": [
+      "confirmar",
+      "organização",
+      "CAEX"
+    ]
+  },
+  {
+    "id": "Q14",
+    "categoria": "ambigua",
+    "tipo": "rag",
+    "pergunta": "Posso usar carrinho à tarde?",
+    "resposta_esperada": "Em 22/07, a partir das 16h, é proibido usar carrinhos no pavilhão.",
+    "termos_esperados": [
+      "22",
+      "16h",
+      "carrinhos",
+      "proibido"
+    ]
+  },
+  {
+    "id": "Q15",
+    "categoria": "fora_do_escopo",
+    "tipo": "rag",
+    "pergunta": "Qual é o melhor hotel de Paris?",
+    "resposta_esperada": "O assistente deve reconhecer que não há informação suficiente na base da ExpoCatólica e orientar que a pergunta está fora do escopo.",
+    "termos_esperados": [
+      "não encontrei",
+      "informação suficiente"
+    ]
+  }
+]
