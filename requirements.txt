@@ -6,3 +6,7 @@ scikit-learn>=1.5
 python-dotenv>=1.0
 openai>=1.40
 pandas>=2.2
+joblib>=1.5
+flaml[automl]==2.7.0
+lightgbm>=4.6
+xgboost>=3.1
