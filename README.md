@@ -262,3 +262,15 @@ GitHub Actions valida:
 ## Uso acadêmico
 
 Projeto desenvolvido para a disciplina **AI Factory: Building Intelligent Systems**, PUCPR. Os dados demonstrativos não devem ser interpretados como dados reais de expositores nem como decisões automatizadas reais.
+
+
+---
+
+## Entrega final — Etapa 3
+
+- [Análise crítica final](docs/ANALISE_CRITICA_ETAPA3.md)
+- [Checklist e pacote final de entrega](docs/ENTREGA_FINAL_ETAPA3.md)
+- [Validação do deploy público](docs/VALIDACAO_DEPLOY_ETAPA3.md)
+- [Resultado de segurança](docs/RESULTADO_SEGURANCA_ETAPA3.md)
+
+**Site publicado:** https://assistente-expocatolica-2026.streamlit.app
