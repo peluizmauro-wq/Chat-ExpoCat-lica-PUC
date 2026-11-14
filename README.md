@@ -4,7 +4,7 @@ Projeto acadêmico da disciplina **AI Factory: Building Intelligent Systems — 
 
 Protótipo funcional de um assistente inteligente para apoiar expositores e organização da ExpoCatólica 2026. O sistema reúne **RAG**, **DuckDB**, **Machine Learning preditivo**, **agentes especializados**, **observabilidade**, **avaliação automatizada** e **guardrails de segurança** em uma única interface Streamlit.
 
-> **URL pública:** será inserida aqui imediatamente após o deploy no Streamlit Community Cloud.
+> **URL pública:** https://assistente-expocatolica-2026.streamlit.app
 
 ## Desafio CBL
 
