@@ -14,6 +14,29 @@ from observability import Observability
 ROOT = Path(__file__).parent
 load_dotenv(ROOT / ".env")
 
+# No Streamlit Community Cloud, os secrets ficam fora do GitHub.
+# Esta ponte copia apenas valores existentes em st.secrets para variáveis
+# de ambiente, mantendo compatibilidade com o código local atual.
+def load_cloud_secrets():
+    keys = (
+        "OPENAI_API_KEY",
+        "OPENAI_MODEL",
+        "LANGFUSE_PUBLIC_KEY",
+        "LANGFUSE_SECRET_KEY",
+        "LANGFUSE_BASE_URL",
+    )
+    for key in keys:
+        if os.getenv(key, "").strip():
+            continue
+        try:
+            value = st.secrets.get(key)
+        except Exception:
+            value = None
+        if value is not None and str(value).strip():
+            os.environ[key] = str(value).strip()
+
+load_cloud_secrets()
+
 st.set_page_config(
     page_title="Assistente ao Expositor | ExpoCatólica 2026",
     page_icon="💬",
