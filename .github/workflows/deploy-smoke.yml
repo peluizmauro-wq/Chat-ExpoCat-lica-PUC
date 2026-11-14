@@ -1,0 +1,36 @@
+name: Validar deploy - Etapa 3
+
+on:
+  push:
+    paths:
+      - "requirements.txt"
+      - "app.py"
+      - "assistant_engine.py"
+      - "security.py"
+      - "testes/test_deploy_smoke.py"
+      - ".streamlit/config.toml"
+      - ".github/workflows/deploy-smoke.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências pinadas
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validar backend do aplicativo
+        run: python testes/test_deploy_smoke.py
+
+      - name: Validar sintaxe da interface
+        run: python -m py_compile app.py assistant_engine.py security.py
