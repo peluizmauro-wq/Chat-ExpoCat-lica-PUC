@@ -1,0 +1,25 @@
+name: Testar segurança - Etapa 3
+
+on:
+  push:
+    paths:
+      - "security.py"
+      - "testes/test_security.py"
+      - "assistant_engine.py"
+      - ".github/workflows/test-security.yml"
+  workflow_dispatch:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Executar testes de segurança
+        run: python testes/test_security.py
