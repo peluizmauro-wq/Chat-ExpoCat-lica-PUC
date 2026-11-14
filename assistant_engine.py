@@ -3,6 +3,8 @@ import os
 import re
 import unicodedata
 
+from security import SecurityGuardrails
+
 def _norm(text):
     return unicodedata.normalize("NFKD", str(text)).encode("ascii", "ignore").decode("ascii").lower()
 
@@ -13,6 +15,7 @@ class ExpoAssistant:
         self.risk_model = risk_model
         self.coordinator = coordinator
         self.observability = observability
+        self.guardrails = SecurityGuardrails()
         self.system_prompt = Path(prompt_path).read_text(encoding="utf-8")
 
     def _is_ml_question(self, q):
@@ -165,13 +168,68 @@ class ExpoAssistant:
                 span.update(output=output, metadata=metadata)
             return output
 
+    def _secure_output(self, answer, sources, mode):
+        result = self.guardrails.scan_output(answer)
+        safe_sources = list(sources or [])
+        if result.scanners:
+            safe_sources.append(
+                "Guardrail de saída: " + ", ".join(result.scanners)
+            )
+
+        if self.observability:
+            with self.observability.span(
+                "guardrail-saida",
+                input_data={"mode": mode},
+                metadata={"scanners": result.scanners}
+            ) as span:
+                if span is not None:
+                    span.update(output={"redactions": result.redactions})
+
+        return result.text, safe_sources, mode
+
     def answer(self, question, provider="Automático", role="Organização", requester_id=None):
+        security = self.guardrails.scan_input(question)
+
+        if self.observability:
+            with self.observability.span(
+                "guardrail-entrada",
+                input_data={"question": question},
+                metadata={
+                    "allowed": security.allowed,
+                    "scanners": security.scanners,
+                    "reason": security.reason,
+                }
+            ) as span:
+                if span is not None:
+                    span.update(output={"redactions": security.redactions})
+
+        if not security.allowed:
+            return (
+                security.text,
+                ["Guardrail de entrada: " + security.reason],
+                "seguranca-bloqueio",
+            )
+
+        question = security.text
+        security_sources = []
+        if security.redactions:
+            security_sources.append(
+                "PII anonimizada na entrada: " + ", ".join(security.redactions)
+            )
+
+        def finish(answer, sources, mode):
+            return self._secure_output(
+                answer,
+                security_sources + list(sources or []),
+                mode,
+            )
+
         if self.coordinator is not None and self.coordinator.can_handle(question):
             result = self.coordinator.run(
                 question, role=role, requester_id=requester_id
             )
             if result:
-                return result
+                return finish(*result)
 
         if self._is_ml_question(question) and self.risk_model is not None:
             if self.observability:
@@ -185,7 +243,7 @@ class ExpoAssistant:
                         span.update(output=answer)
             else:
                 answer, sources = self.risk_model.answer(question)
-            return answer, sources, "ml-preditivo"
+            return finish(answer, sources, "ml-preditivo")
 
         if self._is_data_question(question):
             if self.observability:
@@ -203,7 +261,7 @@ class ExpoAssistant:
                 sources = ["DuckDB: dados/expositores.csv + dados/estandes.csv + dados/pendencias.csv"]
                 if sql:
                     sources.append("Consulta SQL parametrizada executada em memória.")
-                return answer, sources, "dados"
+                return finish(answer, sources, "dados")
 
         if self.observability:
             with self.observability.span(
@@ -214,15 +272,15 @@ class ExpoAssistant:
                 contexts = self.rag.search(question, k=4)
                 if span is not None:
                     span.update(
-                        output=[{"source": c["source"], "score": c.get("score")} for c in contexts]
+                        output=[{"source": x["source"], "score": x.get("score")} for x in contexts]
                     )
         else:
             contexts = self.rag.search(question, k=4)
 
         sources = []
-        for c in contexts:
-            if c["source"] not in sources:
-                sources.append(c["source"])
+        for item in contexts:
+            if item["source"] not in sources:
+                sources.append(item["source"])
 
         use_openai = provider == "OpenAI" or (
             provider == "Automático" and os.getenv("OPENAI_API_KEY", "").strip()
@@ -230,11 +288,14 @@ class ExpoAssistant:
         if use_openai:
             try:
                 answer = self._openai_answer(question, contexts)
-                return answer, sources, "rag+llm"
+                return finish(answer, sources, "rag+llm")
             except Exception as exc:
                 answer = self._offline_rag_answer(question, contexts)
-                answer += f"\n\n_Observação técnica: o modo LLM não pôde ser usado ({type(exc).__name__}); foi aplicado o modo local._"
-                return answer, sources, "rag-local"
+                answer += (
+                    f"\n\n_Observação técnica: o modo LLM não pôde ser usado "
+                    f"({type(exc).__name__}); foi aplicado o modo local._"
+                )
+                return finish(answer, sources, "rag-local")
 
         answer = self._offline_rag_answer(question, contexts)
-        return answer, sources, "rag-local"
+        return finish(answer, sources, "rag-local")
